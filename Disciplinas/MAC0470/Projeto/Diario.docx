@@ -1,0 +1,25 @@
+Para configurar o vscode para o desenvolvimento, foram seguidos os passos descritos em https://yarnpkg.com/getting-started/editor-sdks, que consistem em:
+
+1. Instalar a extensão ZipFS
+2. Rodar o seguinte comando, que gera um arquivo .vscode/settings.json:
+    $ yarn dlx @yarnpkg/sdks vscode
+3. Selecionar a opção "usar a versão do workspace" do Typescript.
+
+Notamos que há algumas inconsistências na documentação da próxima versão programada para ser lançada, a 4.0.
+Por exemplo: em https://yarnpkg.com/advanced/contributing#writing-documentation, a documentação diz que a própria documentação é gerada usando o Gatsby, que é um framework Js. Porém essa informação somente vale para as versões 3.0 em diante, e a documentação da versão 4.0 é gerada usando outro framework, o Docusaurus. Isso acaba sendo relevante, pois o local dos arquivos da documentação é diferente do descrito na própria documentação.
+Alguns links também estão quebrados, como o documento que é usado para definir um fluxo de trabalho(https://yarnpkg.com/features/release-workflow), como descrito em https://yarnpkg.com/advanced/contributing#preparing-your-pr-to-be-released.
+Essas coisas acabam levantando questões sobre o quão confiável é a documentação do projeto, e geram dúvidas para usuários e contribuidores.
+
+
+Testes:
+Para rodar os testes unitarios, basta executar o comando $ yarn test:unit. Ao rodar esses teste, sem fazer qualquer alteracao no repositorio, o comando exibe a seguinte saida (ao final):
+
+Test Suites: 1 failed, 36 passed, 37 total
+Tests:       2 failed, 703 passed, 705 total
+Snapshots:   13 passed, 13 total
+Time:        11.929 s, estimated 19 s
+
+Os dois erros sao relativos ao mesmo modulo: @yarnpkg/libzip, que eh uma versao compilada para web-assembly da biblioteca libzip, que serve para lidar com arquivos .zip.
+
+Para rodar os testes de integracao, executamos os comandos '$ yarn build:cli' e '$ yarn test:integration', que inicialmente exibe o seguinte erro:
+"Internal Error: Your application tried to access corepack, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound."

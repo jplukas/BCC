@@ -1,0 +1,101 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[brazil]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{enumitem}
+\usepackage{bm}
+
+\title{
+    Lista 02 - MAC0338\\
+    Análise de Algoritmos
+}
+\author{
+    João Pedro Lukasavicus Silva\\
+    \href{mailto:joao.lukasavicus.silva@usp.br}
+    {joao.lukasavicus.silva@usp.br}\\
+    9276940
+}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}[itemsep=3ex, label=\textbf{\arabic*}.]
+    \item \label{item1}
+    Resolva as recorrências abaixo:
+
+    \begin{enumerate}
+        \item
+        $T(n) = 2T(\lfloor n/2 \rfloor) + \Theta(n ^ 2)$
+
+        \textbf{Resposta:}\\
+        Assumindo $n = 2^k$
+        \begin{align*}
+            T(n) &= 2T(n/2) + n ^ 2 \\
+            &= 2(T(n/4) + n ^ 2 / 4) + n ^ 2 = 2T(n/4) + (3/2)n ^ 2 \\
+            &= 2(T(n/8) + n ^ 2 / 8) + (3/2)n ^ 2 = 2T(n/8) + (7/4)n ^ 2 \\
+            &= 2(T(n/16) + n ^ 2 / 16) + (7/4)n ^ 2 =  2T(n/16) + (15/8)n ^ 2\\
+            &\vdots\\
+            &= 2T(2^k/2^k) + ((2^k - 1) / 2^{k - 1}) n^2\\
+            &= 2 + (2 - 1/(2^{k - 1})) n^2 \\
+            &= \Theta(n^2)
+        \end{align*}
+
+        Obtivemos $T(n) = \Theta(n^2)$. Vamos provar esse resultado por indução em $n$. \\
+        
+
+        \item
+        $T(n) = 8T(\lfloor n/2 \rfloor) + \Theta(n ^ 2)$
+        
+        \item
+        $T(n) = 2T(\lfloor n/2 \rfloor) + \Theta(n ^ 3)$
+        
+        \item
+        $T(n) = 7T(\lfloor n/3 \rfloor) + \Theta(n ^ 2)$
+
+        \item
+        $T(n) = T(\lfloor 9n/10 \rfloor) + \Theta(n)$
+
+    \end{enumerate}
+
+    \item
+    Escreva um algoritmo que ordena uma lista de $n$ itens dividindo-a em
+    três sublistas de aproximadamente $n/3$ itens, ordenando cada sublista
+    recursivamente e intercalando as três sublistas ordenadas. Analise
+    seu algoritmo concluindo qual é o seu consumo de tempo.
+
+    \item
+    Seja $X[1 \dots n]$ um vetor de inteiros e $i$ e $j$ dois índices distintos de $X$, ou seja,
+    $i$ e $j$ são inteiros entre $1$ e $n$. Dizemos que o par $(i, j)$ é uma inversão de $X$
+    se $i < j$ e $X[i] > X[j]$. Escreva um algoritmo $\mathcal{O}(n \lg n)$ que devolva o número
+    de inversões em um vetor $X$, onde $n$ é o número de elementos em $X$.
+    
+    \item
+    Descreva um algoritmo que, dados inteiros $n$ e $k$, juntamente com $k$ listas ordenadas que
+    em conjunto tenham $n$ registros, produza uma única lista ordenada contendo todos os registros
+    dessas listas (isto é, faça uma intercalação). O seu algoritmo deve ter complexidade
+    $\mathcal{O}(n \lg k)$. Note que isso se transforma em $\mathcal{O}(n \lg n)$ no caso de $n$
+    listas de $1$ elemento, e em $\mathcal{O}(n)$ se só houver duas listas (no total com $n$
+    elementos).
+
+    \item
+    Considere a sequência de vetores $A_k [1 \dots 2^k], \, A_{k - 1} [1 \dots 2^{k - 1}],
+    \dots, A_1 [1 \dots 2^1], \, A_0 [1 \dots 2^0]$. Suponha que cada um dos vetores é crescente.
+    Queremos reunir, por meio de sucessivas operações de intercalação (= \textit{merge}), o
+    conteúdo dos vetores $A_0, \dots , A_k$ em um único vetor crescente $B[1 \dots n]$ onde 
+    $n = 2^k - 1$. Escreva um algoritmo que faça isso em $\mathcal{O}(n)$ unidades de tempo. Use 
+    como subrotina o \textsc{Intercale} visto em sala de aula.
+
+\end{enumerate}
+
+\end{document}

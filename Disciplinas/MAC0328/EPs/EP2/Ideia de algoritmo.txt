@@ -1,0 +1,2 @@
+Ideia de algoritmo: modificar lowpoint/tarjan para:
+Ao fazer um backtrack, se o lowpoint de um vértice não abaixar (talvez isso esteja errado. Talvez o correto seja "se o lowpoint (atual, depois de uma visita a uma aresta) não for menor do que o tempo de descoberta daquele vértce"), então ele é a "base" de um BCC. Nesse instante, todas as arestas daquele BCC tarão sido visitadas e estarão na pilha, portanto basta desempilhar todas as arestas até encontrar uma aresta "árvore" ou "galho" que seja adjacente à base.

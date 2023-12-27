@@ -1,0 +1,586 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[brazil]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{commath}
+
+\title{
+   MAC0210 - Laboratório de métodos numéricos\\
+   Exercício Programa 1
+}
+\author{
+    João Pedro Lukasavicus Silva\\
+    \href{mailto:joao.lukasavicus.silva@usp.br}
+    {joao.lukasavicus.silva@usp.br}\\
+    9276940
+}
+
+\begin{document}
+\maketitle
+\section{Primeira parte: método dos pontos fixos}
+Função cujas raízes queremos encontrar:
+  \begin{equation}
+      f(x) = e^x - 2x^2
+  \end{equation}
+  
+Pelo método dos pontos fixos, precisamos achar funções $g(x)$ tais que
+$$
+  e^x - 2x^2 = 0 \iff g(x) = x
+$$
+  
+  Podemos então listar as seguintes funções:
+  \begin{align*}
+    g_1(x) &= \ln 2 + 2 \ln x \, &(\text{para } x > 0)
+    \\
+    g_2(x) &= \sqrt{\dfrac{e^x}{2}} \, &(\text{para } x \geq 0)
+    \\
+    g_3(x) &= -\sqrt{\dfrac{e^x}{2}} \, &(\text{para } x \leq 0)
+  \end{align*}
+  
+  Agora, precisamos encontrar intervalos para os quais as funções acima convirjam. Para isso, dada $g_i(x)$, precisamos encontrar o intervalo (ou união de intervalos) $I$ tal que $x \in I \implies |\od{}{x} g(x)| < 1$.
+  
+  \begin{enumerate}
+    \item $g_1(x) = \ln 2 + \ln x \, (\text{para } x > 0)$
+    \begin{align*}
+    \Big|\od{}{x}[\ln 2 + 2 \ln x]\Big| < 1 &\iff 
+    \Big| \dfrac{2}{x} \Big| < 1
+    \\
+    \Big|\od{}{x} g_1(x)\Big| < 1 &\iff 
+    |x| > 2
+    \\
+    \Big|\od{}{x} g_1(x)\Big| < 1 &\iff 
+    x > 2 \text{ ou } x < -2    
+    \end{align*}
+    Como o domínio de $g_1(x)$ é $\{x \in \mathbb{R} : x > 0\}$, então sabemos que $g_1(x)$ converge para $x > 2$.    
+    
+    \item $g_2(x) = \sqrt{\dfrac{e^x}{2}} \, (\text{para } x \geq 0)$
+    \begin{align*}
+    \Big|\od{}{x}\left[\sqrt{\dfrac{e^x}{2}}\right]\Big| < 1 &\iff 
+    \Big| \dfrac{\sqrt{e^x}}{2 \sqrt{2}} \Big| < 1
+    \\
+    \Big|\od{}{x}\left[\sqrt{\dfrac{e^x}{2}}\right]\Big| < 1 &\iff 
+    e^{\frac{x}{2}} < 8^{\frac{1}{2}}
+    \\
+    \Big|\od{}{x}\left[\sqrt{\dfrac{e^x}{2}}\right]\Big| < 1 &\iff 
+    x < \ln 8    
+    \end{align*}
+    
+     \item $g_2(x) = -\sqrt{\dfrac{e^x}{2}} \, (\text{para } x \leq 0)$
+    \begin{align*}
+    \Big|\od{}{x}\left[-\sqrt{\dfrac{e^x}{2}}\right]\Big| < 1 &\iff 
+    \Big|-\dfrac{\sqrt{e^x}}{2 \sqrt{2}} \Big| < 1
+    \\
+    \Big|\od{}{x}\left[-\sqrt{\dfrac{e^x}{2}}\right]\Big| < 1 &\iff 
+    \Big|-\dfrac{\sqrt{e^x}}{2 \sqrt{2}} \Big| < 1
+    \\
+    \Big|\od{}{x}\left[-\sqrt{\dfrac{e^x}{2}}\right]\Big| < 1 &\iff 
+    x < \ln 8    
+    \end{align*}
+    
+    
+    Como o domínio de $g_3(x)$ é $x < 0$, então a função vai convergir para $x < 0$.
+  \end{enumerate}
+  Agora, podemos fazer a seguinte pergunta, existe a possibilidade de duas funções $g_i(x)$ diferentes convergirem para um mesmo ponto fixo?
+  Para $g_2(x) = \sqrt{\dfrac{e^x}{2}}$ e $g_3(x) =  - \sqrt{\dfrac{e^x}{2}}$ isso somente seria possível se $\sqrt{\dfrac{e^0}{2}} = 0 = -\sqrt{\dfrac{e^0}{2}}$ (pois a intersecção dos domínios dessas duas funções é $\{0\}$), o que é um absurdo.\\
+  Para $g_1(x) = \ln 2 + \ln x$ e $g_3(x) =  - \sqrt{\dfrac{e^x}{2}}$, o argumento é análogo (aliás, note que a interseção dos domínios dessas duas funções é vazio).\\
+  Portanto, as únicas funções que poderiam convergir para um mesmo ponto fixo são 
+  $g_1(x) = \ln 2 + \ln x$ e $g_2(x) = \sqrt{\dfrac{e^x}{2}}$. Admitindo que exista $x^*$ tal que $x^* = g_1(x^*) = g_2(x^*)$, temos que:
+  \begin{align*}
+  x^* &= \ln 2 + \ln \left(\sqrt{\dfrac{e^{x^*}}{2}}\right)
+  \\
+  x^* &= \ln 2 + \dfrac{1}{2} \ln \left(\dfrac{e^{x^*}}{2}\right)
+  \\
+  x^* &= \ln 2 + \dfrac{1}{2} \left(\ln e^{x^*} - \ln 2 \right)
+  \\
+  \dfrac{x^*}{2} &= \dfrac{\ln 2}{2} 
+  \\
+  x^* &= \ln 2    
+  \end{align*}
+  
+  Porém, 
+  \begin{align*}
+  x^* &= \ln 2 \iff \ln 2 = \ln 2 + \ln(\ln 2)
+  \\
+  x^* &= \ln 2 \iff \ln(\ln 2) = 0
+  \\
+  x^* &= \ln 2 \iff 2 = e    
+  \end{align*}
+  
+  O que é impossível.
+  Então as três funções escolhidas convergirão para pontos fixos diferentes, que serão as raízes da função $f(x) = e^x - 2x^2$.
+  
+  \subsection{Análise de convergência}
+  Vamos agora analisar a taxa de convergência para as nossas iterações de ponto fixo. Dado uma tolerância a erro $\epsilon > 0$, queremos saber quantas iterações serão necessárias para alcançar um erro menor que $\epsilon$.
+  Vamos denotar o erro absoluto entre um iterando $x_k$ da nossa sequência e uma raiz $r$ por $E_k$. Então temos que: 
+  \begin{align*}
+        E_{k+1} &= |x_{k+1} - r|\\
+        E_{k+1} &= |g(x_k) - g(r)|\\
+        E_{k+1} &= |g(r) + g^\prime(\xi_k)(x_k - r) - g(r)|\\
+        E_{k+1} &= |g^\prime(\xi_k)(x_k - r)|\\
+    \end{align*}
+    Onde $\xi_k$ é um ponto entre $x_k$ e $r$.
+    \begin{align*}
+        E_{k+1} &= |g^\prime(\xi_k)|E_k\\
+        E_{k} &= \prod_{n=0}^{k-1}|g^\prime(\xi_n)| E_0\\
+    \end{align*}
+    Caso haja $M < 1$ tal que $(\forall x) M \geq |g^\prime(x)|$, então temos que
+    \begin{align*}
+        E_{k} &\leq M^k E_0\\
+    \end{align*}
+    Como não temos como saber o valor de $E_0$ sem saber de antemão o valor da raiz $r$, podemos calcular um majorante para este erro:
+    \begin{align*}
+        E_0 &= |x_0 - r|\\
+        E_0 &= |x_0 - x_1 + x_1 - r|\\
+        E_0 &\leq |x_0 - x_1| + |x_1 - r|\\
+        E_0 &\leq E_1 + |x_1 - x_0|\\
+    \end{align*}
+    Como $E_1 \leq M E_0$, temos que
+    \begin{align*}
+        E_0 \leq M E_0 + |x_1 - x_0|\\
+        E_0 - M E_0 \leq |x_1 - x_0|\\
+        E_0 (1 - M) \leq |x_1 - x_0|\\
+    \end{align*}
+    Como $M < 1$, temos
+    \begin{align*}
+        E_0 \leq \frac{|x_1 - x_0|}{1 - M}
+    \end{align*}
+    Portanto, 
+    \begin{align*}
+        E_k \leq M^k \frac{|x_1 - x_0|}{1 - M}
+    \end{align*}
+    Então, se temos uma tolerância de erro $\epsilon$, para alcançar um erro menor que essa tolerância em $k$ iterações, temos:
+    \begin{align*}
+        \epsilon &\geq M^k \frac{|x_1 - x_0|}{1 - M}\\
+        \epsilon \frac{1 - M}{|x_1 - x_0|} &\geq M^k\\
+        \ln \epsilon + \ln \left( \frac{1 - M}{|x_1 - x_0|} \right) &\geq k \ln M\\
+    \end{align*}
+    Como $M < 1$, $\ln M < 0$, portanto:
+    \begin{align*}
+        k &\geq \frac{\ln \epsilon + \ln \left( \frac{1 - M}{|x_1 - x_0|} \right)}{\ln M}
+    \end{align*}
+    Ou ainda, $k \geq \frac{\ln \epsilon + \ln \left( \frac{1 - M}{|g(x_0) - x_0|} \right)}{\ln M}$.\\
+
+    Há uma forma de se avaliar o erro de aproximação para uma determinada iteração. Temos que:
+    \begin{align*}
+        f(x_k) &= f(r) + f^{\prime}(\xi_k)(x_k - r)\\
+        f(x_k) &= f^{\prime}(\xi_k)(x_k - r)\\
+    \end{align*}
+    Se $|f^\prime(x)| > 0$ para o intervalo que estamos analisando, então:
+    \begin{align*}
+        \frac{|f(x_k)|}{|f^{\prime}(\xi_k)|} &= E_k\\
+    \end{align*}
+    Se existir $N > 0$ tal que $\frac{1}{N} \leq |f^\prime(\xi_i)|$ para todo $\xi_i$ na sequência de iterandos, então
+    \begin{align*}
+        N |f(x_k)| \geq E_k
+    \end{align*}
+    Assim, se existir tal $N$, poderemos avaliar o erro absoluto em uma dada iteração.\\
+    
+    Vamos agora analisar cada uma das nossas funções de ponto fixo.
+    \subsubsection{$g_3(x) = -\sqrt{\frac{e^x}{2}}$}
+    Usaremos essa função para aproximar a raiz $r_3$ que está em $(-\infty, 0]$, então nossos iterandos estarão todos também em $(-\infty, 0]$.\\
+    
+    Temos que $f^{\prime \prime}(x) = e^x - 4$, portanto, $f^{\prime \prime}(x) = 0 \iff x = \ln 4$.
+    Para $x \leq 0$, como $f^{\prime \prime}(0) = -3$ e $\ln 4 > 0$, $f^\prime(x)$ é estritamente decrescente. Então o menor valor de $f^\prime(x)$ se dá em $f^\prime(0) = e^0 = 1$. Assim, $(\forall x \leq 0) N = 1 \leq |f^\prime(x)|$.\\
+    Então, como já vimos, temos que
+    \begin{align*}
+        |f(x_k)| \geq E_k
+    \end{align*}
+    Portanto, para $x < 0$, podemos estimar o erro absoluto $E_k$ facilmente.
+    
+    Temos que $|{g_3}^\prime(x)| = |-\frac{\sqrt{e^x}}{2 \sqrt{2}}| = \frac{\sqrt{e^x}}{2 \sqrt{2}}$. Como, para essa função, $x \in (-\infty, 0]$, temos que
+    \begin{align*}
+        |{g_3}^\prime(x)| &\leq \frac{\sqrt{e^0}}{2 \sqrt{2}}\\
+        |{g_3}^\prime(x)| &\leq \frac{\sqrt{2}}{4}\\
+    \end{align*}
+    Então, temos que, para uma tolerância $\epsilon$, o número mínimo $k$ necessário de iterações para alcançar essa tolerância será:
+    \begin{align*}
+        k &\geq \frac{\ln \epsilon + \ln(1 - M) - \ln(|g(x_0) - x_0|)}{\ln M}\\
+        k &\geq \frac{\ln \epsilon + \ln(1 - M)}{\ln M} +
+        \left(\frac{-1}{\ln M}\right){\ln(|g(x_0) - x_0|)}\\
+    \end{align*}
+    \begin{align*}
+        k &\geq \frac{\ln \epsilon + \ln(1 - \sqrt{2}/4)}{\ln (\sqrt{2}/4)} +
+        \left(\frac{-1}{\ln (\sqrt{2}/4)}\right){\ln(|- \sqrt{e^{x_0}}/2 - x_0|)}\\
+        k &\geq \frac{\ln \epsilon + \ln(\frac{4 - \sqrt{2}}{4})}{(1/2 - 2)\ln 2} +
+        \left(\frac{-1}{(1/2 - 2)\ln 2}\right){\ln(|\sqrt{e^{x_0}}/2 + x_0|)}\\
+        k &\geq \frac{\ln \epsilon + \ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} +
+        \left(\frac{-1}{-3/2\ln 2}\right)(\ln(|\sqrt{e^{x_0}} + 2x_0|) - \ln 2)\\
+        k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} +
+        \frac{\ln \epsilon}{-3/2 \ln 2} +
+        \left(\frac{-1}{-3/2\ln 2}\right)(\ln(|\sqrt{e^{x_0}} + 2x_0|) - \ln 2)\\
+        k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} +
+        \frac{\ln \epsilon}{-3/2 \ln 2} +
+        \left(\frac{-1}{-3/2\ln 2}\right)\ln(|\sqrt{e^{x_0}} + 2x_0|) + \frac{\ln 2}{-3/2 \ln 2}\\
+        k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+        \frac{\ln \epsilon}{-3/2 \ln 2} +
+        \left(\frac{-1}{-3/2\ln 2}\right)\ln(|\sqrt{e^{x_0}} + 2x_0|)\\
+        k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+        \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{x_0}} + 2x_0|) - \ln \epsilon)\\
+    \end{align*}
+    Sendo $\epsilon = 10^{-t}$, para algum $t \geq 0$, temos que
+    \begin{align*}
+         k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+        \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{x_0}} + 2x_0|) + t \ln 10)\\
+    \end{align*}
+    Ao passo que $x_0$ se aproxima de $-\infty$, $\ln(|\sqrt{e^{x_0}} + 2x_0|) \approx \ln 2 + \ln -x_0$.\\
+    Assim, $k$ é linear em $t$, e logarítmica em $-x_0$.
+    
+    Vamos fazer predições para alguns valores de $x_0$ e $t$.
+    \begin{enumerate}
+    \item $t = 5$
+        \begin{enumerate}
+            \item $x_0 = 0$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|1|) + 5 \ln 5)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(5 \ln 5)\\
+                k & \geq 8
+            \end{align*}
+
+            \item $x_0 = -1$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-1}} + 2(-1)|) + 5 \ln 5)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e} - 2|) + 5 \ln 5)\\
+                k & \geq 8
+            \end{align*}
+
+            \item $x_0 = -10$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-10}} + 2(-10)|) + 5 \ln 5)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{10}} - 20|) + 5 \ln 5)\\
+                k & \geq 11
+            \end{align*}
+            \item $x_0 = -100$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-100}} + 2(-100)|) + 5 \ln 5)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{100}} - 200|) + 5 \ln 5)\\
+                k & \geq 27
+            \end{align*}
+        \end{enumerate}
+        \item $t = 10$
+        \begin{enumerate}
+            \item $x_0 = 0$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|1|) + 10 \ln 10)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(10 \ln 10)\\
+                k & \geq 13
+            \end{align*}
+
+            \item $x_0 = -1$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-1}} + 2(-1)|) + 10 \ln 10)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e} - 2|) + 10 \ln 10)\\
+                k & \geq 23
+            \end{align*}
+
+            \item $x_0 = -10$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-10}} + 2(-10)|) + 10 \ln 10)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{10}} - 20|) + 10 \ln 10)\\
+                k & \geq 24
+            \end{align*}
+            \item $x_0 = -100$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-100}} + 2(-100)|) + 10 \ln 10)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{100}} - 200|) + 10 \ln 10)\\
+                k & \geq 27
+            \end{align*}
+        \end{enumerate}
+        \item $t = 15$
+        \begin{enumerate}
+            \item $x_0 = 0$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|1|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(15 \ln 15)\\
+                k & \geq 39
+            \end{align*}
+
+            \item $x_0 = -1$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-1}} + 2(-1)|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e} - 2|) + 15 \ln 15)\\
+                k & \geq 40
+            \end{align*}
+
+            \item $x_0 = -10$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-10}} + 2(-10)|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{10}} - 20|) + 15 \ln 15)\\
+                k & \geq 42
+            \end{align*}
+            \item $x_0 = -100$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-100}} + 2(-100)|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{100}} - 200|) + 15 \ln 15)\\
+                k & \geq 44
+            \end{align*}
+        \end{enumerate}
+    \end{enumerate}
+    
+    \subsubsection[g2]{$g_2(x) = \sqrt{\frac{e^x}{2}}$}
+    Vamos usar $g_2(x) = \sqrt{\frac{e^x}{2}}$ para encontrar a raiz $0 < r_2 \leq 2$.
+    Temos que ${g_2}^{\prime}(x) = \frac{\sqrt{e^x}}{2\sqrt{2}}$, que é uma função estritamente crescente. Portanto, no intervalo dado,  $|{g_2}^{\prime}(x)| \leq \sqrt{\frac{e^2}{8}} = e \frac{\sqrt{2}}{4}$. Então temos que:
+    \begin{align*}
+       E_{k} &\leq \frac{|g_2(x_k) - x_k|}{1 - e \frac{\sqrt{2}}{4}}\\
+       E_{k} &\leq \frac{|\frac{\sqrt{2e^{x_k}}}{2} - x_k|}{\frac{4 - e\sqrt{2}}{4}}\\
+       E_{k} &\leq \frac{|\frac{\sqrt{2e^{x_k}} - 2x_k}{2}|}{\frac{4 - e\sqrt{2}}{4}}\\
+       E_{k} &\leq \frac{|2(\sqrt{2e^{x_k}} - x_k)|}{4 - e\sqrt{2}}\\
+    \end{align*}
+
+    Então, temos que, para uma tolerância $\epsilon$, o número mínimo $k$ necessário de iterações para alcançar essa tolerância será:
+    \begin{align*}
+        k &\geq \frac{\ln \epsilon + \ln(\frac{4 - e\sqrt{2}}{4})}{\ln \frac{e\sqrt{2}}{4}} +
+        \left(\frac{-1}{\ln \frac{e\sqrt{2}}{4}}\right){\ln(|\frac{e^{x_0}}{2} - x_0|)}\\
+        k &\geq \frac{\ln \epsilon + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 + 1/2 \ln 2 - 2 \ln 2} +
+        \left(\frac{-1}{1 + 1/2 \ln 2 - 2 \ln 2}\right)(\ln(|e^{x_0} - 2x_0|) - \ln 2)\\
+        k &\geq \frac{\ln \epsilon + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 - 3/2 \ln 2} +
+        \left(\frac{-1}{1 - 3/2 \ln 2}\right)(\ln(|e^{x_0} - 2x_0|) - \ln 2)\\
+    \end{align*}
+    Sendo $\epsilon = 10^{-t}$, com $t > 0$, é fácil ver que $k$ é linear em $t$.
+
+    Vamos fazer predições para alguns valores de $x_0$ e $t$.
+    \begin{align*}
+        E_{k + 1} &= |f^\prime(\xi_k)|E_k\\
+        E_{k + 1} & \leq M E_k\\
+        E_{k} &= |x_k - x_{k+1} + x_{k+1} - r|\\
+        E_{k} &\leq |x_{k+1} - x_k| + E_{k + 1}\\
+        E_{k} &\leq |x_{k+1} - x_k| + M E_k\\
+        E_{k}(1 - M) &\leq |x_{k+1} - x_k|\\
+        E_{k} &\leq \frac{|x_{k+1} - x_k|}{1-M}\\
+        E_{k} &\leq \frac{|g(x_k) - x_k|}{1-M}\\
+    \end{align*}
+    \begin{enumerate}
+    \item $t = 5$
+        \begin{enumerate}
+            \item $x_0 = 0.5$
+            \begin{align*}
+                 k &\geq \frac{-5 \ln 10 + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 - 3/2 \ln 2} +
+                \left(\frac{-1}{1 - 3/2 \ln 2}\right)(\ln(|e^{0.5} - 1|) - \ln 2)\\
+                k &\leq 344
+            \end{align*}
+
+            \item $x_0 = 2$
+             \begin{align*}
+                 k &\geq \frac{-5 \ln 10 + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 - 3/2 \ln 2} +
+                \left(\frac{-1}{1 - 3/2 \ln 2}\right)(\ln(|e^2 - 4|) - \ln 2)\\
+                k &\leq 385
+            \end{align*}
+        \end{enumerate}
+        
+        \item $t = 10$
+        \begin{enumerate}
+            \item $x_0 = 0.5$
+            \begin{align*}
+                 k &\geq \frac{-10 \ln 10 + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 - 3/2 \ln 2} +
+                \left(\frac{-1}{1 - 3/2 \ln 2}\right)(\ln(|e^{0.5} - 1|) - \ln 2)\\
+                k &\leq 633
+            \end{align*}
+
+            \item $x_0 = 2$
+             \begin{align*}
+                 k &\geq \frac{-10 \ln 10 + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 - 3/2 \ln 2} +
+                \left(\frac{-1}{1 - 3/2 \ln 2}\right)(\ln(|e^2 - 4|) - \ln 2)\\
+                k &\leq 385
+            \end{align*}
+        \end{enumerate}
+        \item $t = 15$
+        \begin{enumerate}
+            \item $x_0 = 0$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|1|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(15 \ln 15)\\
+                k & \geq 39
+            \end{align*}
+
+            \item $x_0 = -1$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-1}} + 2(-1)|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e} - 2|) + 15 \ln 15)\\
+                k & \geq 40
+            \end{align*}
+
+            \item $x_0 = -10$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-10}} + 2(-10)|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{10}} - 20|) + 15 \ln 15)\\
+                k & \geq 42
+            \end{align*}
+            \item $x_0 = -100$
+            \begin{align*}
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{e^{-100}} + 2(-100)|) + 15 \ln 15)\\
+                k &\geq \frac{\ln(4 - \sqrt{2}) - 2\ln 2}{-3/2 \ln 2} - \frac{2}{3} +
+                \left(\frac{2}{3\ln 2}\right)(\ln(|\sqrt{1/e^{100}} - 200|) + 15 \ln 15)\\
+                k & \geq 44
+            \end{align*}
+        \end{enumerate}
+    \end{enumerate}
+
+    \subsubsection[g1]{$g_1(x) = \ln 2 + 2 \ln x$}
+    Vamos usar $g_1(x) = \ln 2 + 2 \ln x$ para encontrar a raiz $r_1 > 2$.\\
+    No intervalo $(2, +\infty)$, temos que $f^{\prime \prime}(x) > 0$, portanto $f^\prime(x)$ é estritamente crescente. Assim, $|f^\prime(x)| > |f^\prime(2)| = |e^2 - 4\cdot2| = e^2 - 4\cdot2$
+    \begin{align*}
+       E_{k} &\leq \frac{|g_2(x_k) - x_k|}{1 - e \frac{\sqrt{2}}{4}}\\
+       E_{k} &\leq \frac{|\frac{\sqrt{2e^{x_k}}}{2} - x_k|}{\frac{4 - e\sqrt{2}}{4}}\\
+       E_{k} &\leq \frac{|\frac{\sqrt{2e^{x_k}} - 2x_k}{2}|}{\frac{4 - e\sqrt{2}}{4}}\\
+       E_{k} &\leq \frac{|2(\sqrt{2e^{x_k}} - x_k)|}{4 - e\sqrt{2}}\\
+    \end{align*}
+
+    Então, temos que, para uma tolerância $\epsilon$, o número mínimo $k$ necessário de iterações para alcançar essa tolerância será:
+    \begin{align*}
+        k &\geq \frac{\ln \epsilon + \ln(\frac{4 - e\sqrt{2}}{4})}{\ln \frac{e\sqrt{2}}{4}} +
+        \left(\frac{-1}{\ln \frac{e\sqrt{2}}{4}}\right){\ln(|\frac{e^{x_0}}{2} - x_0|)}\\
+        k &\geq \frac{\ln \epsilon + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 + 1/2 \ln 2 - 2 \ln 2} +
+        \left(\frac{-1}{1 + 1/2 \ln 2 - 2 \ln 2}\right)(\ln(|e^{x_0} - 2x_0|) - \ln 2)\\
+        k &\geq \frac{\ln \epsilon + \ln(4 - e\sqrt{2}) - 2\ln 2}{1 - 3/2 \ln 2} +
+        \left(\frac{-1}{1 - 3/2 \ln 2}\right)(\ln(|e^{x_0} - 2x_0|) - \ln 2)\\
+    \end{align*}
+    Sendo $\epsilon = 10^{-t}$, com $t > 0$, é fácil ver que $k$ é linear em $t$.
+
+    Vamos fazer predições para alguns valores de $x_0$ e $t$.
+    
+    % \begin{align*}
+    %     \od{}{x}\frac{\ln \epsilon + \ln(1 - M) - \ln(|- \sqrt{\frac{e^x}{2}} - x|)}{\ln M} &= 
+    %     -\frac{1}{\ln M} \frac{1 + e^{x/2}/2\sqrt{2}}{e^{x/2} / 2 + x} \\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     -\frac{1}{\ln M} \frac{1 + e^{x/2}/2\sqrt{2}}{e^{x/2} / 2 + x} > 0\\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1 + e^{x/2}/2\sqrt{2}}{e^{x/2} / 2 + x} > 0\\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1}{e^{x/2} / 2 + x} + \frac{e^{x/2}/2\sqrt{2}}{e^{x/2} / 2 + x} > 0\\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1}{e^{x/2} / 2 + x} + \frac{e^{x/2}/2}{e^{x/2} / 2 + x} \frac{1}{\sqrt{2}} > 0\\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1}{e^{x/2} / 2 + x} +
+    %     \frac{e^{x/2}/2 + x}{e^{x/2} / 2 + x} \frac{1}{\sqrt{2}} - 
+    %     \frac{x}{e^{x/2} / 2 + x} \frac{1}{\sqrt{2}}> 0\\
+    %      \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1}{e^{x/2} / 2 + x} - 
+    %     \frac{x}{e^{x/2} / 2 + x} \frac{1}{\sqrt{2}}> -\frac{1}{\sqrt{2}}\\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1 + \sqrt{e^x}/2\sqrt{2}}{\sqrt{e^x}/2 + x} > 0\\
+    %     \od{}{x}t(x) > 0 &\iff 
+    %     \frac{1 + \sqrt{e^x}/2\sqrt{2}}{\sqrt{e^x}/2 + x} > 0\\
+    %     \sqrt{e^x}/2 + x < 0 &\iff \sqrt{e^x} < -2x\\
+    %     \sqrt{e^x}/2 + x < 0 &\iff e^x < (-2x)^2\\
+    %     \sqrt{e^x}/2 + x < 0 &\iff x < 2 (\ln 2 + \ln x)\\
+    % \end{align*}
+
+    % \begin{align*}
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln \left( \frac{1 - \frac{\sqrt{2}}{4}}{|g(x_0) - x_0|} \right)}
+    %     {\ln \frac{\sqrt{2}}{4}}\\
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln \left( \frac{\frac{4 -\sqrt{2}}{4}}{|-\frac{\sqrt{e^{x_0}}}{2 \sqrt{2}} - x_0|} \right)}
+    %     {\ln \frac{\sqrt{2}}{4}}\\
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln \left( \frac{\frac{4 -\sqrt{2}}{4}}{|\frac{\sqrt{e^{x_0}} + 2 \sqrt{2} x_0}{2 \sqrt{2}}|} \right)}
+    %     {\ln \frac{\sqrt{2}}{4}}\\
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln (4 - \sqrt{2}) - \ln 4 - \ln(\sqrt{e^{x_0}} + 2 \sqrt{2} x_0) + \ln 2 + 1/2 \ln 2}
+    %     {1/2 \ln 2 - 2 \ln 2}\\
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln (4 - \sqrt{2}) - \ln(\sqrt{e^{x_0}} + 2 \sqrt{2} x_0) + 1/2 \ln 2}
+    %     {- 3/2 \ln 2}\\
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln (4 - \sqrt{2}) + 1/2 \ln 2}
+    %     {- 3/2 \ln 2} + 
+    %     \frac{\ln(\sqrt{e^{x_0}} + 2 \sqrt{2} x_0)}{3/2 \ln 2}\\
+    % \end{align*}
+    % É fácil ver que esta função terá valor máximo quando $x_0 = 0$, portanto:
+    % \begin{align*}
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln (4 - \sqrt{2}) + 1/2 \ln 2} {- 3/2 \ln 2} + 
+    %     \frac{\ln(\sqrt{e^{0}} + 2 \sqrt{2} \cdot 0)}{3/2 \ln 2}\\
+    %     k &\geq
+    %     \frac{\ln \epsilon + \ln (4 - \sqrt{2}) + 1/2 \ln 2} {- 3/2 \ln 2} + 
+    %     \frac{\ln(1)}{3/2 \ln 2}\\
+    %     k &\geq \frac{\ln (4 - \sqrt{2}) + 1/2 \ln 2} {- 3/2 \ln 2} - \frac{2 \ln \epsilon}{3 \ln 2}\\
+    %     k &\geq \frac{\ln (4 - \sqrt{2})} {- 3/2 \ln 2} - \frac{2 \ln \epsilon}{3 \ln 2} - \frac{1/2 \ln 2}{3/2 \ln 2}\\
+    %     k &\geq \frac{\ln (4 - \sqrt{2})} {- 3/2 \ln 2} - \frac{1}{3} - \frac{\ln \epsilon}{3/2 \ln 2}\\
+    % \end{align*}
+    % \begin{align*}
+    %     x_{k+1} - x_k &= g(x_k) - x_k\\
+    %     x_{k+1} - x_k &= g(x_{k-1}) + g^\prime(\xi_{k-1})(x_k - x_{k-1}) - x_k\\
+    %     x_{k+1} - x_k &= g^\prime(\xi_{k-1})(x_k - x_{k-1})\\
+    %     x_{k+1} > x_k & \iff g^\prime(\xi_{k-1})(x_k - x_{k-1}) > 0\\
+    %     (\forall x) g^\prime(x) > 0 \implies x_{k+1} > x_k &\iff x_{k} > x_{k-1}\\
+    %     x_1 - x_0 &= g(x_0) - x_0\\
+    %     x_1 - x_0 &= g(r) + g^\prime(r)(x_0 - r) - x_0\\
+    %     x_1 - x_0 &= g^\prime(r)(x_0 - r) - (x_0 - r)\\
+    %     x_1 - x_0 &= (g^\prime(r) - 1) (x_0 - r)\\
+    %     x_1 > x_0 &\iff (g^\prime(r) - 1) (x_0 - r) > 0\\
+    %     x_1 > x_0 &\iff x_0 - r < 0\\
+    %     x_1 > x_0 &\iff x_0 < r\\
+    % \end{align*}
+    % \begin{align*}
+    %     x_{k+1} - x_k &= g(x_k) - x_k\\
+    %     x_{k+1} - x_k &= g(r) + g^\prime(\xi_k)(x_k - r) - x_k\\
+    %     x_{k+1} - x_k &= g^\prime(\xi_k)(x_k - r) - (x_k - r)\\
+    %     x_{k+1} - x_k &= (g^\prime(\xi_k) - 1)(x_k - r)\\
+    %     x_{k+1} - x_k &\geq 0 \iff (g^\prime(\xi_k) - 1)(x_k - r) \geq 0\\
+    %     x_{k+1} - x_k & \geq 0 \iff (r - x_k) \geq 0\\
+    %     x_{k+1} & \geq x_k \iff r \geq x_k\\
+    %     x_{k+1} - r &= g(r) + g^\prime(\xi_k)(x_k - r) - r\\
+    %     x_{k+1} - r &= g^\prime(\xi_k)(x_k - r)\\
+    %     x_{k+1} - r &\leq 0 \iff g^\prime(\xi_k)(x_k - r)\leq 0\\
+    %     x_{k+1} - r &\leq 0 \iff x_k - r\leq 0 \wedge
+    %     g^\prime(\xi_k) \geq 0 \\
+    %     x_{k+1} &\leq r \iff x_k \leq r \wedge
+    %     g^\prime(\xi_k) \geq 0\\
+    %     x_{k+1} & \geq x_k \iff r \geq x_k\\
+    %     x_k &\leq r \implies x_{k+1} > x_k\\
+    %     x_k &\leq r \implies x_{k+1} < r\\
+    %     x_k &\geq r \implies x_{k+1} < x_k\\
+    %     x_k &\geq r \implies x_{k+1} > r\\
+    %     |x_1 - r| &= |g(x_0) - g(r)|\\
+    %     |x_1 - r| &= |g(r) + g^\prime(\xi_0)(x_0 - r) - g(r)|\\
+    %     |x_1 - r| &= |g^\prime(\xi_0)(x_0 - r)|\\
+    %     E_{k+1} &= |g^\prime(\xi_k)|E_k\\
+    %     E_{k+1} &\leq \max_{\xi_k \text{ eh um ponto entre } x_k \text{ e }r}{|g^\prime(\xi_k)|}E_k\\
+    % \end{align*}
+    
+    
+\end{document}

@@ -1,0 +1,78 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[brazil]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{setspace}
+\doublespacing
+\title{
+    Lista 04 - MAC0320\\
+    Introdução à Teoria dos Grafos
+}
+\author{
+    João Pedro Lukasavicus Silva\\
+    \href{mailto:joao.lukasavicus.silva@usp.br}
+    {joao.lukasavicus.silva@usp.br}\\
+    Nº USP: 9276940\\
+    Bacharelado em Ciências da Computação
+}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}[itemsep=3ex, label=E\textbf{\arabic*}.]
+    \setcounter{enumi}{15}
+    \item 
+    Provar (nos moldes da prova vista em aula para o algoritmo de Kruskal) que o algoritmo descrito a seguir constrói uma árvore geradora de custo mínimo.
+
+    \underline{ALGORITMO CORTA GASTOS}
+
+    Entrada: Grafo conexo $G = (V, A)$, com custos $c(a) \geq 0$ em cada aresta $a \in A$.\\
+    Saída: Árvore ótima $T$ (árvore geradora de custo mínimo).
+
+    \begin{enumerate}[label=\arabic*.]
+        \item (Ordenação) Ordene as arestas de $G$ em ordem não-crescente de seus custos.\\
+        Chame-as de $a_1, a_2, \ldots, a_m$, sendo $c(a_1) \geq c(a_2) \geq \ldots \geq c(a_m)$.
+
+        \item $T \leftarrow G$.
+
+        \item Para $i = 1$ até $m$ faça\\
+        se $T - a_i$ é conexo, então $T \leftarrow T - a_i$.
+
+        \item Devolva $T$.
+    \end{enumerate}
+
+    \textbf{Resposta:} Seja $T$ um subgrafo de $G$ construído pelo algoritmo descrito. Claramente $T$ é um subgrafo conexo minimal, com $V(T) = V(G)$, e portanto $T$ é uma árvore geradora de $G$. Vamos provar que $T$ é uma árvore ótima.
+
+    Suponha que $A(G) \setminus A(T) = \{e_1, e_2, \ldots, e_k\}$, e que $e_i$ foi escolhido (para não compor a $T$) antes de $e_j$ se $i < j$.\\
+    Escolha uma árvore ótima $T^*$ tal que $|(A(T) \cap A(T^*))|$ seja máximo.\\
+    Note que:
+    \begin{align*}
+        A(T^*) \cap (A(G) \setminus A(T)) &= (A(T^*) \cap A(G)) \setminus A(T)\\
+        A(T^*) \cap (A(G) \setminus A(T)) &= A(T^*)  \setminus A(T)\\
+    \end{align*}
+    Suponha que $A(T^*)  \setminus A(T) = \emptyset$. Então $A(T^*) \subset A(T)$. Porém, como tanto $T$ quanto $T^*$ são ambos grafos conexos minimais, isso implica em $A(T) = A(T^*)$. Então temos que $c(T) = c(T^*)$, e como $T^*$ é uma árvore ótima, então $T$ também será.
+
+    Suponha então que $A(T^*)  \setminus A(T) \neq \emptyset$. Note que $A(T^*)  \setminus A(T) = A(T^*) \cap (A(G) \setminus A(T))$.\\
+    O conjunto $A(T^*) \cap (A(G) \setminus A(T))$ é o conjunto das arestas de $G$ que foram selecionadas pelo algoritmo para não fazerem parte de $T$, mas que estão em $T^*$. Estamos sob a suposição de que este conjunto não é vazio.\\
+    Seja então $e_j$ a primeira aresta a ser selecionada para ser "excluída" de $G$ (para formar $T$) tal que $e_j$ esteja em $T^*$ (isso significa que as arestas $e_1, \ldots, e_{j-1}$ não pertencem a $T^*$), e sejam $\{u, v\}$ os vértices nos quais $e_j$ incide. Seja $P$ o único caminho em $T$ de $u$ a $v$. Note que o caminho $P$ tem pelo menos uma aresta, digamos $a$, que não pertence a $T^*$ (pois caso contrário $T^*$ teria um circuito). Como a aresta $e_j$ foi escolhida para ficar fora de $T$, e $a$ não foi ($a \in A(T)$), então $c(e_j) \geq c(a)$. De fato, basta notar que $G - (\{e_1, \ldots, e_{j-1}\} \cup \{a\})$ é conexo, e portanto, se tivéssemos $c(e_j) < c(a)$, então a aresta $a$ teria sido escolhida pelo algoritmo.\\
+    Seja $T^\prime \coloneqq T^* + a - e_j$. Como $T^*$ é uma árvore, e portanto um grafo acíclico maximal, então $T^* + a$ contém exatamente um circuito, e vimos que esse circuito contém $e_j$. Então $T^* + a - e_j$ é um grafo conexo acíclico cujos vértices são exatamente os vértices de $G$, e portanto é uma árvore geradora de $G$.\\
+    Como $T^*$ é uma árvore ótima, então $c(T^\prime) = c(T^*)$, e portanto $T^\prime$ também é uma árvore ótima. Mas $T^\prime$ contém mais arestas em comum com $T$ do que $T^*$ (isto é, $|A(T^\prime) \cap A(T)| > |A(T^*) \cap A(T)|$), uma contradição à escolha de $T^*$. Logo, devemos ter $A(T^*)  \setminus A(T) \neq \emptyset$, e já vimos que isso implica em $T = T^*$, e então $T$ será uma árvore geradora ótima.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,204 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[brazil]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{enumitem}
+\usepackage{bm}
+
+\title{
+    Lista 01 - MAC0338\\
+    Análise de Algoritmos
+}
+\author{
+    João Pedro Lukasavicus Silva\\
+    \href{mailto:joao.lukasavicus.silva@usp.br}
+    {joao.lukasavicus.silva@usp.br}\\
+    9276940
+}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}[itemsep=3ex, label=\textbf{\arabic*}.]
+    \item \label{item1}
+    Lembre-se que $\lg n$ denota o logaritmo na base $2$ de $n$. Usando a definicao de notacao $\mathcal{O}$, prove que:
+    \begin{enumerate}
+        \item
+        $3^n$ nao eh $\mathcal{O}(2^n)$
+      
+        \textit{\textbf{Resposta:}}\\
+        Vamos supor que $3^n \in \mathcal{O}(2^n)$. Isso significa que existem constantes positivas $c$ e $n_0$ tais que, para todo $n \geq n_0 \implies c 2^n \geq 3^n$. 
+		Temos que:
+		$$
+		c 2^n \geq 3^n \iff \lg c + n \geq n \lg 3
+	    $$
+		$$
+		c 2^n \geq 3^n \iff \lg c \geq n (\lg 3 - 1)
+	    $$
+		$$
+		c 2^n \geq 3^n \iff \dfrac{\lg c}{\lg 3 - 1} \geq n
+	    $$
+		Então, dados $c$ e $n_0$ basta escolhermos $n > n_0$ tal que $n > \dfrac{\lg c}{\lg 3 - 1}$ que obtemos um contra-exemplo para a nossa suposição.
+		
+	    \item \label{item}
+        $\log_{10}n$ eh $\mathcal{O}(\lg n)$
+      
+        \textit{\textbf{Resposta:}}\\
+        Temos que:
+        $$
+        \lg n = \lg 10 \log_{10} n
+        $$
+        Assim, escolhendo $c = (\lg 10)^{-1}$ e $n_0 = 1$, eh facil ver que $\forall n \geq n_0 \implies \log_{10} n \leq c \lg n$ (tambem eh verdade que $\forall n \geq n_0 \implies \log_{10} n \geq c \lg n$). Portanto, pela definicao, $\log_{10}n \in \mathcal{O}(\lg n)$
+        
+        \item
+        $\log_{10}n$ eh $\mathcal{O}(\lg n)$
+      
+        \textit{\textbf{Resposta:}}\\
+        Ver item \ref{item}
+        
+    \end{enumerate}
+    
+    \item
+    Usando a definicao de notacao $\mathcal{O}$, prove que:
+    
+    \begin{enumerate}
+        \item
+        $n^2 + 10n + 20 = \mathcal{O}(n^2)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Eh facil ver que $n^2 + 10n + 20 \leq 2n^2 \iff n^2 + 10n + 20 - 2n^2 \leq 0$. 
+        Seja entao o polinomio $-n^2 + 10n + 20 = n^2 + 10n + 20 - 2n^2$. Temos que as raizes desse polinomio sao $5 \pm \sqrt{3}$. Assim, escolhendo $c = 2$ e $n_0 = 5 + \sqrt{3}$, temos que
+        $$
+        \forall n (n \geq n_0 \implies n^2 + 10n + 20 \leq c n^2)
+        $$
+        
+        \item
+        $\lceil n/3 \rceil = \mathcal{O}(n)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Pela definicao da operacao teto, temos que $n/3 \leq \lceil n/3 \rceil < n/3 + 1$. Portanto, $n \geq n/3 + 1 \implies n > \lceil n/3 \rceil$.\\
+        Seja $1 - 2/3 n = n/3 + 1 - n$. Eh facil ver que $n/3 + 1 \leq n \iff 1 - 2/3 n \leq 0 \iff n \geq 3/2$.\\
+        Assim, escolhendo $c = 1$ e $n_0 = 3$, temos que
+        $$
+        \forall n (n \geq n_0 \implies \lceil n/3 \rceil \leq c n)
+        $$
+        
+        \item
+        $\lg n = \mathcal{O}(\log_{10} n)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Ver item \ref{item}
+        
+        \item
+        $n = \mathcal{O}(2^n)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Temos que $n \leq 2^n \iff n - 2^n \leq 0$. Como a primeira derivada de $n - 2^n$ eh igual a $1 - \ln 2 \cdot 2^n$ e $2^n$ eh uma funcao estritamente crescente, temos que $1 - \ln 2 \cdot 2^n$ eh estritamente decrescente, e $n \leq 1 \implies 1 - \ln 2 \cdot 2^n < 0$. Assim, podemos afirmar que $n - 2^n$ tambem eh estritamente decrescente no intervalo $[1, \infty)$.\\
+        Para $n = 1$, temos que $n - 2^n = -1 < 0$. Entao, escolhendo $n_0 = 1$ e $c = 1$ podemos afirmar:
+        $$
+        \forall n (n \geq n_0 \implies n \leq c 2^n) 
+        $$
+        
+        \item
+        $n/1000$ nao eh $\mathcal{O}(1)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Vamos supor que $n/1000 \in \mathcal{O}(1)$. Assim, existem constantes positivas $c$ e $n_0$ tais que $\forall n (n \geq n_0 \implies n/1000 \leq c)$.
+        Porem, escolhendo $n$ tal que $n \geq n_0$ e $n > 1000c$, temos que $n \geq n_0$ e $n/1000 > c$, o que contradiz a nossa suposicao.
+        
+        \item
+        $n^2/2$ nao eh $\mathcal{O}(n)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Vamos supor que $n^2/2 \in \mathcal{O}(n)$. Assim, existem constantes positivas $c$ e $n_0$ tais que $\forall n (n \geq n_0 \implies n^2/2 \leq c n)$.
+        Porem, como $n_0 \geq 0$, escolhendo $n$ tal que $n \geq n_0$ e $n > 2c$, temos que $n \geq n_0$ e $n^2/2 \geq cn$, o que contradiz a nossa suposicao.
+        
+    \end{enumerate}
+    
+    \item
+    Prove ou de um contra-exemplo para as afirmacoes abaixo:
+    \begin{enumerate}
+        \item
+        $\lg{\sqrt{n}} = \mathcal{O}(\lg n)$
+        
+        \textit{\textbf{Resposta:}}\\
+        Como $\lg{\sqrt{n}} = \lg{n^{1/2}} = \dfrac{\lg{n}}{2}$, eh facil ver que $\lg{\sqrt{n}} = \mathcal{O}(\lg n)$, e tambem $\lg n =  \mathcal{O}(\lg{\sqrt{n}})$.
+        
+        \item \label{item2}
+        Se $f(n) = \mathcal{O}(g(n))$ e $g(n) = \mathcal{O}(h(n))$, entao $f(n) = \mathcal{O}(h(n))$
+         
+        \textit{\textbf{Resposta:}}\\
+        Se $f(n) = \mathcal{O}(g(n))$ e $g(n) = \mathcal{O}(h(n))$, entao existem constantes positivas $c_1, c_2, n_1, n_2$ tais que 
+        $$
+        \forall n (n \geq n_1 \implies f(n) \leq c_1 g(n))
+        $$
+        e
+        $$
+        \forall n (n \geq n_2 \implies g(n) \leq c_2 h(n))
+        $$
+        Como $c_1, c_2 \geq 0$, entao tambem vale
+        $$
+        \forall n (n \geq n_1 \implies f(n) \leq c_1 g(n))
+        $$
+        e
+        $$
+        \forall n (n \geq n_2 \implies c_1 g(n) \leq c_1 c_2 h(n))
+        $$
+        Entao, escolhendo $n_0 = \max\{n_1, n_2\}$, e $c = c_1 c_2$, temos:
+        $$
+        \forall n (n \geq n_0 \implies f(n) \leq c h(n))
+        $$
+        Isto eh, $f(n) = \mathcal{O}(h(n))$\\
+        
+        \item
+        Se $f(n) = \mathcal{O}(g(n))$ e $g(n) = \Theta(h(n))$, entao $f(n) = \Theta(h(n))$
+         
+        \textit{\textbf{Resposta:}}\\
+        Dadas duas funcoes $t(n)$ e $s(n)$, temos que
+        $t(n) = \Theta(s(n)) \iff t(n) = \mathcal{O}(s(n)) \wedge s(n) = \mathcal{O}(t(n))$.\\
+        Seja $f(n) = n$, $g(n) = n^2$ e $h(n) = 2 n^2$. Eh claro que $g(n) = \Theta(h(n))$. Para mostrar que $f(n) = \mathcal{O}(g(n))$, basta escolher $c = 1$ e $n_0 = 1$, e entao
+        $\forall n (n \geq n_0) \implies n \leq c n^2$.\\
+        Ja sabemos por \ref{item2} que $f(n) = \mathcal{O}(h(n))$. Entao, para que $f(n) = \Theta(h(n))$, eh necessario que $h(n) = \mathcal{O}(f(n))$\\
+        Vamos supor que seja o caso que $h(n) = \mathcal{O}(f(n))$. Entao existem constantes positivas $c$ e $n_0$ tais que
+        $\forall n (n \geq n_0 \implies 2 n^2 \leq c n)$. Porem, como $n_0 \geq 0$, escolhendo $n$ tal que $n \geq n_0$ e $n > \dfrac{c}{2}$, temos que $2n^2 > cn$, contradizendo nossa hipotese.\\
+        
+        \item
+        Suponha que $\lg(g(n)) > 0$ e que $f(n) \geq 1$ para todo $n$ suficientemente grande.
+        Neste caso, se $f(n) = \mathcal{O}(g(n))$ entao $\lg(f(n)) = \mathcal{O}(\lg(g(n)))$
+         
+        \textit{\textbf{Resposta:}}\\
+        A funcao $\lg n$ eh estritamente crescente, pois a sua primeira derivada eh $\dfrac{\lg e}{n}$, que eh positiva em todo o dominio.\\
+        Como $f(n) \geq 1$ para todo $n$ suficientemente grande, entao existe uma constante $k \in \mathbb{R}$ tal que $n \geq k \implies f(n) \geq 1 \implies \lg (f(n)) \geq 0$.\\
+        Se $f(n) = \mathcal{O}(g(n))$, isso significa que existem constantes positivas $c_1$ e $n_1$ tais que
+        $$
+        \forall n (n \geq n_1 \implies f(n) \leq c_1 g(n))
+        $$
+        Entao, sendo $n_0 = \max\{n_1, k\}$, vale que
+        $$
+        \forall n (n \geq n_0 \implies \lg(f(n)) \leq \lg (c_1 g(n)))
+        $$
+        Dado que $\lg (c_1 g(n)) = \lg (c_1) + \lg (g(n))$, entao, escolhendo $c \in R^+$ tal que
+        $c \geq \dfrac{\lg (c_1)}{\lg (g(n))} + 1 \implies
+        c \lg(g(n)) \geq \lg (c_1) + \lg (g(n))$, temos que:
+        $$
+        \forall n (n \geq n_0 \implies \lg (f(n)) \leq c \lg (g(n)))
+        $$
+        Isto eh, $\lg (f(n)) = \mathcal{O}(\lg (g(n)))$\\
+        
+        
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}
